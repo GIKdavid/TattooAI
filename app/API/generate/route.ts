@@ -22,9 +22,13 @@ export async function POST(req: Request) {
       },
       body: JSON.stringify({
         model: "gpt-image-1",
-        prompt: `${prompt}, fine line minimal tattoo, clean lines, thin strokes, no shading, elegant, aesthetic`,
-        size: "1024x1024",
-        n: 3,
+prompt: `${prompt}. Fine line tattoo illustration, clean thin lines, high detail, symmetric balance, no color, minimal shading.`,
+size: "1024x1024",
+n: 3
+model: "gpt-image-1",
+prompt: `${prompt}. Fine line tattoo illustration, clean thin lines, high detail, symmetric balance, no color, minimal shading.`,
+size: "1024x1024",
+n: 3
       }),
     });
 
@@ -38,3 +42,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
+
