@@ -1,39 +1,59 @@
-import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
+import { NextResponse } from 'next/server'
 
-export const runtime = "nodejs";
+export const runtime = 'nodejs'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
-    const { prompt } = await req.json();
+    const { prompt } = await req.json()
 
-    if (!prompt || typeof prompt !== "string") {
+    if (!prompt || typeof prompt !== 'string') {
       return NextResponse.json(
-        { error: "Invalid or missing prompt" },
+        { error: 'Invalid or missing prompt' },
         { status: 400 }
-      );
+      )
     }
 
-    const response = await openai.images.generate({
-      model: "gpt-image-1",
-      prompt: `${prompt}. Fine line tattoo illustration, clean thin lines, minimal shading, high detail, must look like a tattoo stencil, no color, balanced composition.`,
-      n: 3,
-      size: "1024x1024",
-    });
+    const apiKey = process.env.OPENAI_API_KEY
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: 'Missing OPENAI_API_KEY' },
+        { status: 500 }
+      )
+    }
 
-    const images = response.data.map((img) => img.url).filter(Boolean);
+    const response = await fetch('https://api.openai.com/v1/images/generations', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: 'dall-e-3',
+        prompt: `${prompt}. Fine line tattoo illustration, minimal, clean stencil, no color.`,
+        n: 3,
+        size: '1024x1024',
+      }),
+    })
 
-    return NextResponse.json({ images }, { status: 200 });
+    if (!response.ok) {
+      const text = await response.text()
+      return NextResponse.json(
+        { error: 'OpenAI error', details: text },
+        { status: response.status }
+      )
+    }
+
+    const data = await response.json()
+    const images: string[] = (data?.data || [])
+      .map((img: any) => img.url)
+      .filter(Boolean)
+
+    return NextResponse.json({ images }, { status: 200 })
 
   } catch (error: any) {
-    console.error("OpenAI Error:", error);
     return NextResponse.json(
-      { error: "Server error", details: error?.message || String(error) },
+      { error: 'Server error', details: String(error?.message || error) },
       { status: 500 }
-    );
+    )
   }
 }
