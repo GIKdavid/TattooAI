@@ -29,19 +29,29 @@ export default function DesignPage() {
         What story do you want your tattoo to tell?
       </h1>
 
-      <textarea
-        value={prompt}
-        onChange={(e) => setPrompt(e.target.value)}
-        placeholder="Ex: quiet strength, healing, rebirth..."
-        style={{
-          width: "100%",
-          padding: "12px",
-          borderRadius: "8px",
-          border: "1px solid #ccc",
-          minHeight: "90px",
-          marginBottom: "16px"
-        }}
-      />
+     <textarea
+  value={prompt}
+  onChange={(e) => setPrompt(e.target.value)}
+  placeholder="Ex: quiet strength, healing, rebirth..."
+  className="tattoo-input"
+  style={{
+    width: "100%",
+    padding: "12px",
+    borderRadius: "8px",
+    border: "1px solid #ccc",
+    minHeight: "90px",
+    marginBottom: "16px"
+  }}
+/>
+
+<style jsx>{`
+  .tattoo-input {
+    color: #111 !important;       /* טקסט שחור */
+    background: #fff !important;  /* רקע לבן */
+    caret-color: #111;            /* קו מהבהב שחור */
+  }
+`}</style>
+
 
       <button
         onClick={generate}
@@ -77,4 +87,5 @@ export default function DesignPage() {
       )}
     </div>
   );
+
 }
